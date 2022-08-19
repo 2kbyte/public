@@ -1,6 +1,5 @@
---forked from uwuware by jan (https://github.com/Jan5106/uwuware_final)
 local assets = {6183930112, 6071575925, 6071579801, 6073763717, 3570695787, 5941353943, 4155801252, 2454009026, 5553946656, 4155801252, 4918373417, 3570695787, 2592362371}
-local cprovider = Game:GetService"ContentProvider"
+local cprovider = Game:GetService("ContentProvider")
 for _, v in next, assets do
 	cprovider:Preload("rbxassetid://" .. v)
 end
@@ -9,10 +8,10 @@ repeat wait() until game:IsLoaded()
 
 --LIBRARY START
 --Services
-getgenv().runService = game:GetService"RunService"
-getgenv().textService = game:GetService"TextService"
-getgenv().inputService = game:GetService"UserInputService"
-getgenv().tweenService = game:GetService"TweenService"
+getgenv().runService = game:GetService("RunService")
+getgenv().textService = game:GetService("TextService")
+getgenv().inputService = game:GetService("UserInputService")
+getgenv().tweenService = game:GetService("TweenService")
 
 if getgenv().library then
     getgenv().library:Unload()
@@ -99,7 +98,7 @@ end
 
 function library:LoadConfig(config)
     if table.find(self:GetConfigs(), config) then
-        local Read, Config = pcall(function() return game:GetService"HttpService":JSONDecode(readfile(self.foldername .. "/" .. config .. self.fileext)) end)
+        local Read, Config = pcall(function() return game:GetService("HttpService"):JSONDecode(readfile(self.foldername .. "/" .. config .. self.fileext)) end)
         Config = Read and Config or {}
         for _, option in next, self.options do
             if option.hasInit then
@@ -127,7 +126,7 @@ end
 function library:SaveConfig(config)
     local Config = {}
     if table.find(self:GetConfigs(), config) then
-        Config = game:GetService"HttpService":JSONDecode(readfile(self.foldername .. "/" .. config .. self.fileext))
+        Config = game:GetService("HttpService"):JSONDecode(readfile(self.foldername .. "/" .. config .. self.fileext))
     end
     for _, option in next, self.options do
         if option.type ~= "button" and option.flag and not option.skipflag then
@@ -149,7 +148,7 @@ function library:SaveConfig(config)
             end
         end
     end
-    writefile(self.foldername .. "/" .. config .. self.fileext, game:GetService"HttpService":JSONEncode(Config))
+    writefile(self.foldername .. "/" .. config .. self.fileext, game:GetService("HttpService"):JSONEncode(Config))
 end
 
 function library:GetConfigs()
@@ -2475,7 +2474,7 @@ function library:Init()
         self.base.Parent = script.Parent.Parent
     elseif syn then
         pcall(function() syn.protect_gui(self.base) end)
-        self.base.Parent = game:GetService"CoreGui"
+        self.base.Parent = game:GetService("CoreGui")
     end
 
     self.main = self:Create("ImageButton", {
@@ -2621,7 +2620,8 @@ function library:Init()
     self.close.InputBegan:connect(function(input)
         if input.UserInputType.Name == "MouseButton1" then
             library:Close()
-            library:SendNotification(5, "Proxima minimized.\n Press '"..tostring(close.key).."' to show.")
+            local r, g, b = library.round(library.flags["Menu Accent Color"])
+            library:SendNotification(5, "<font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>proxima</font> minimized\n Press '"..tostring(close.key).."' to show")
         end
     end)
 
@@ -2723,6 +2723,18 @@ function library:Init()
     if not getgenv().silent then
         delay(1, function() self:Close() end)
     end
+
+    --loaded notification
+    if not getgenv().silent then
+        --if Loaded then
+            local r, g, b = library.round(library.flags["Menu Accent Color"])
+            library:SendNotification(5, "Loaded <font color='rgb(" .. r .. "," .. g .. "," .. b .. ")'>"..library.title.."</font> successfully")
+        --else
+        --    local r, g, b = library.round(library.flags["Menu Accent Color"])
+        --    library:SendNotification(5, "Failed to load "..library.title.." (error copied to clipboard)")
+        --    --setclipboard(LoadError)
+        --end
+    end
 end
 
 --setting tab
@@ -2733,7 +2745,7 @@ library.SettingsColumn1 = library.SettingsTab:AddColumn()
 library.SettingsMain = library.SettingsColumn:AddSection"Main"
 library.SettingsMain:AddButton({text = "Unload Cheat", nomouse = true, callback = function()
     library:Unload()
-    getgenv().uwuware = nil
+    getgenv().proxima = nil
 end})
 library.SettingsMain:AddBind({text = "Panic Key", callback = library.options["Unload Cheat"].callback})
 
@@ -2751,17 +2763,9 @@ local Backgrounds = {
     ["Floral"] = 5553946656,
     ["Flowers"] = 6071575925,
     ["Circles"] = 6071579801,
-    ["Hearts"] = 6073763717,
-    ["Polka dots"] = 6214418014,
-    ["Mountains"] = 6214412460,
-    ["Zigzag"] = 6214416834,
-    ["Zigzag 2"] = 6214375242,
-    ["Tartan"] = 6214404863,
-    ["Roses"] = 6214374619,
-    ["Hexagons"] = 6214320051,
-    ["Leopard print"] = 6214318622
+    ["Hearts"] = 6073763717
 }
-library.SettingsMenu:AddList({text = "Background", flag = "UI Background", max = 6, values = {"Floral", "Flowers", "Circles", "Hearts", "Polka dots", "Mountains", "Zigzag", "Zigzag 2", "Tartan", "Roses", "Hexagons", "Leopard print"}, callback = function(Value)
+library.SettingsMenu:AddList({text = "Background", flag = "UI Background", max = 6, values = {"Floral", "Flowers", "Circles", "Hearts"}, callback = function(Value)
     if Backgrounds[Value] then
         library.main.Image = "rbxassetid://" .. Backgrounds[Value]
     end
@@ -2770,7 +2774,7 @@ end}):AddColor({flag = "Menu Background Color", color = Color3.new(), callback =
 end, trans = 1, calltrans = function(Value)
     library.main.ImageTransparency = 1 - Value
 end})
-library.SettingsMenu:AddSlider({text = "Tile Size", value = 90, min = 50, max = 500, callback = function(Value)
+library.SettingsMenu:AddSlider({text = "Tile Size", value = 100, min = 50, max = 500, callback = function(Value)
     library.main.TileSize = UDim2.new(0, Value, 0, Value)
 end})
 
@@ -2900,17 +2904,16 @@ function library:SendNotification(duration, message)
     end)
 end
 
-if not getgenv().silent then
-    if Loaded then
-        library:SendNotification(5, "Loaded " .. (GameTitle or "universal features") .. " successfully")
-    else
-        library:SendNotification(5, "Failed to load " .. (GameTitle or "universal features") .. " (error copied to clipboard)")
-        setclipboard(LoadError)
-    end
-end
+--local Loaded, LoadError = true
+
+--Loaded, LoadError = pcall(function() end)
+
+delay(1, function() library:LoadConfig(tostring(getgenv().autoload)) end)
+
+--insert loaded notification
 
 if not library:GetConfigs()[1] then
     writefile(library.foldername .. "/Default" .. library.fileext, loadstring(game:HttpGet("https://raw.githubusercontent.com/2kbyte/public/main/uwuware-lib-fork.lua/default_config.lua", true))())
-    library.options["Config List"]:AddValue"Default"
+    library.options["Config List"]:AddValue("Default")
     library:LoadConfig("Default")
 end
