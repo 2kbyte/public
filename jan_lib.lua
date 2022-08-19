@@ -1,4 +1,3 @@
-
 local assets = {6183930112, 6071575925, 6071579801, 6073763717, 3570695787, 5941353943, 4155801252, 2454009026, 5553946656, 4155801252, 4918373417, 3570695787, 2592362371}
 local cprovider = Game:GetService"ContentProvider"
 for _, v in next, assets do
@@ -18,17 +17,17 @@ if getgenv().library then
     getgenv().library:Unload()
 end
 
-local library = {design = getgenv().design == "kali" and "kali" or "uwuware", tabs = {}, draggable = true, flags = {}, title = "uwuware", open = false, mousestate = inputService.MouseIconEnabled, popup = nil, instances = {}, connections = {}, options = {}, notifications = {}, tabSize = 0, theme = {}, foldername = "uw_configs", fileext = ".uw"}
+local library = {design = getgenv().design == "kali" and "kali" or "uwuware", tabs = {}, draggable = true, flags = {}, title = "proxima", open = false, mousestate = inputService.MouseIconEnabled, popup = nil, instances = {}, connections = {}, options = {}, notifications = {}, tabSize = 0, theme = {}, foldername = "uw_configs", fileext = ".uw"}
 getgenv().library = library
 
 --Locals
 local dragging, dragInput, dragStart, startPos, dragObject
 
 local blacklistedKeys = { --add or remove keys if you find the need to
-    Enum.KeyCode.Unknown,Enum.KeyCode.W,Enum.KeyCode.A,Enum.KeyCode.S,Enum.KeyCode.D,Enum.KeyCode.Slash,Enum.KeyCode.Tab,Enum.KeyCode.Escape
+    Enum.KeyCode.Unknown, Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D, Enum.KeyCode.Slash, Enum.KeyCode.Tab, Enum.KeyCode.Escape
 }
 local whitelistedMouseinputs = { --add or remove mouse inputs if you find the need to
-    Enum.UserInputType.MouseButton1,Enum.UserInputType.MouseButton2,Enum.UserInputType.MouseButton3
+    Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2, Enum.UserInputType.MouseButton3
 }
 
 --Functions
@@ -499,6 +498,11 @@ library.createButton = function(option, parent)
     option.title.InputBegan:connect(function(input)
         if input.UserInputType.Name == "MouseButton1" then
             option.callback()
+            spawn(function()
+                tweenService:Create(option.title, TweenInfo.new(0.2), {BackgroundColor3 = library.flags["Menu Accent Color"]}):Play()
+                wait(.2)
+                tweenService:Create(option.title, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}):Play()
+            end)
             if library then
                 library.flags[option.flag] = true
             end
@@ -507,6 +511,7 @@ library.createButton = function(option, parent)
                 library.tooltip.Size = UDim2.new(0, textService:GetTextSize(option.tip, 15, Enum.Font.Code, Vector2.new(9e9, 9e9)).X, 0, 20)
             end
         end
+
         if input.UserInputType.Name == "MouseMovement" then
             if not library.warning and not library.slider then
                 option.title.BorderColor3 = library.flags["Menu Accent Color"]
@@ -2456,7 +2461,6 @@ function library:Close()
         end
         self.main.Visible = self.open
         self.cursor.Visible  = self.open
-        self.cursor1.Visible  = self.open
     end
 end
 
@@ -2491,8 +2495,20 @@ function library:Init()
         Parent = self.main
     })
 
+    self.close = self:Create("TextButton", {
+        ZIndex = 4,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(0, 21, 0, 21),
+        Position = UDim2.new(0, 470, 0, 1),
+        Text = "一",
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextSize = 10,
+        Visible = true,
+        Parent = self.top
+    })
+
     self:Create("TextLabel", {
-        Position = UDim2.new(0, 6, 0, -1),
+        Position = UDim2.new(0, 6, 0, 0),
         Size = UDim2.new(0, 0, 0, 20),
         BackgroundTransparency = 1,
         Text = tostring(self.title),
@@ -2535,12 +2551,10 @@ function library:Init()
     })
 
     self.cursor = self:Create("Triangle", {
-        Color = Color3.fromRGB(180, 180, 180),
-        Transparency = 0.6,
-    })
-    self.cursor1 = self:Create("Triangle", {
-        Color = Color3.fromRGB(240, 240, 240),
-        Transparency = 0.6,
+        Color = Color3.fromRGB(255, 255, 255),
+        Filled = true,
+        Thickness = 1,
+        Visible = true
     })
 
     self.tooltip = self:Create("TextLabel", {
@@ -2602,6 +2616,13 @@ function library:Init()
             dragging = false
         end
     end)
+    print(close.key)
+    self.close.InputBegan:connect(function(input)
+        if input.UserInputType.Name == "MouseButton1" then
+            library:Close()
+            library:SendNotification(7.5, "Proxima minimized.\n Press '"..tostring(close.key).."' to show.")
+        end
+    end)
 
     function self:selectTab(tab)
         if self.currentTab == tab then return end
@@ -2661,11 +2682,8 @@ function library:Init()
                 local mouse = inputService:GetMouseLocation()
                 local MousePos = Vector2.new(mouse.X, mouse.Y)
                 self.cursor.PointA = MousePos
-                self.cursor.PointB = MousePos + Vector2.new(12, 12)
-                self.cursor.PointC = MousePos + Vector2.new(12, 12)
-                self.cursor1.PointA = MousePos
-                self.cursor1.PointB = MousePos + Vector2.new(11, 11)
-                self.cursor1.PointC = MousePos + Vector2.new(11, 11)
+                self.cursor.PointB = MousePos + Vector2.new(0, 12)
+                self.cursor.PointC = MousePos + Vector2.new(7, 8)
             end
             if self.slider then
                 self.slider:SetValue(self.slider.min + ((input.Position.X - self.slider.slider.AbsolutePosition.X) / self.slider.slider.AbsoluteSize.X) * (self.slider.max - self.slider.min))
@@ -2718,8 +2736,8 @@ end})
 library.SettingsMain:AddBind({text = "Panic Key", callback = library.options["Unload Cheat"].callback})
 
 library.SettingsMenu = library.SettingsColumn:AddSection"Menu"
-library.SettingsMenu:AddBind({text = "Open / Close", flag = "UI Toggle", nomouse = true, key = "Insert", callback = function() library:Close() end})
-library.SettingsMenu:AddColor({text = "Accent Color", flag = "Menu Accent Color", color = Color3.fromRGB(255, 65, 65), callback = function(Color)
+close = library.SettingsMenu:AddBind({text = "Open / Close", flag = "UI Toggle", nomouse = true, key = "BackSlash", callback = function() library:Close() end})
+library.SettingsMenu:AddColor({text = "Accent Color", flag = "Menu Accent Color", color = Color3.fromRGB(189, 147, 249), callback = function(Color)
     if library.currentTab then
         library.currentTab.button.TextColor3 = Color
     end
@@ -2821,6 +2839,7 @@ function library:SendNotification(duration, message)
         Size = UDim2.new(1, -10, 0, 40),
         BackgroundTransparency = 1,
         Text = tostring(message),
+        RichText = true,
         Font = Enum.Font.SourceSans,
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 18,
@@ -2838,25 +2857,28 @@ function library:SendNotification(duration, message)
     wait(0.4)
 
     --create other things
-    library:Create("Frame", {
+    notification1 = library:Create("Frame", {
         Position = UDim2.new(0, 0, 0, 20),
         Size = UDim2.new(0, 0, 0, 1),
-        BackgroundColor3 = Color3.fromRGB(255, 65, 65),
+        BackgroundColor3 = library.flags["Menu Accent Color"],
         BorderSizePixel = 0,
         Parent = notification
     }):TweenSize(UDim2.new(1, 0, 0, 1), "Out", "Linear", duration)
 
-    tweenService:Create(library:Create("TextLabel", {
-        Position = UDim2.new(0, 4, 0, 0),
+    notification2 = tweenService:Create(library:Create("TextLabel", {
+        Position = UDim2.new(0, 4, 0, 1),
         Size = UDim2.new(0, 70, 0, 16),
         BackgroundTransparency = 1,
-        Text = "uwuware",
+        Text = "proxima",
         Font = Enum.Font.Gotham,
-        TextColor3 = Color3.fromRGB(255, 65, 65),
+        TextColor3 = library.flags["Menu Accent Color"],
         TextSize = 16,
         TextTransparency = 1,
         Parent = notification
     }), TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+
+    table.insert(library.theme, notification1)
+    table.insert(library.theme, notification2)
 
     --remove
     delay(duration, function()
