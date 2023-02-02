@@ -7,10 +7,10 @@ end
 
 --Services
 getgenv().RunService = game:GetService("RunService")
-local TextService = game:GetService("TextService")
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local HttpService = game:GetService("HttpService")
+getgenv().TextService = game:GetService("TextService")
+getgenv().UserInputService = game:GetService("UserInputService")
+getgenv().TweenService = game:GetService("TweenService")
+getgenv().HttpService = game:GetService("HttpService")
 
 if getgenv().library then
     getgenv().library:Unload()
@@ -2969,7 +2969,7 @@ coroutine.wrap(function()
 end)()
 
 if not library:GetConfigs()[1] then
-    writefile(library.foldername .. "/Default" .. library.fileext, loadstring(game:HttpGet("https://raw.githubusercontent.com/2kbyte/public/main/uwuware-lib-fork.lua/default_config.lua", true))())
+    writefile(library.foldername .. "/Default" .. library.fileext, loadstring(game:HttpGet("https://raw.githubusercontent.com/2kbyte/public/main/default_config.lua", true))())
     library.options["Config List"]:AddValue("Default")
     library:LoadConfig("Default")
 end
