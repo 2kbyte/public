@@ -1,1 +1,1 @@
-return '{"UI Background":"Floral","Menu Background Color Transparency":1,"Menu Background Color":[0,0,0],"Menu Accent Color":[0.7411764860153198,0.5764706134796143,0.9764705896377564],"UI Toggle":"F8","Tile Size":150}'
+return '{"Menu Background Color Transparency":1,"UI Background":"Floral","Hit Aura":0,"Menu Background Color":[0,0,0],"Menu Accent Color":[0.7411764860153198,0.5764706134796143,0.9764705896377564],"Sell At":90,"Aura Range":25,"Auto Claim Dispensers":0,"Auto Sell":0,"Panic Key":"None","UI Toggle":"LeftAlt","Tile Size":150,}'
